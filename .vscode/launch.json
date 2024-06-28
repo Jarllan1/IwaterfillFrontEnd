@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WaterfillApplication<waterfill>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "co.iwaterfill.waterfill.WaterfillApplication",
+            "projectName": "waterfill",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
