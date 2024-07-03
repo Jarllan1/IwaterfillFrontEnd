@@ -22,8 +22,15 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue[600],
       appBar: AppBar(
-        title: Text("Products"),
+        title: Text("PRODUCTS",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2.0,
+        ),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.add, color: Colors.white,),
@@ -33,7 +40,11 @@ class _ProductScreenState extends State<ProductScreen> {
             },
           ),
         ],
+        backgroundColor: Colors.blue,
+        centerTitle: true,
       ),
+
+
       body: Padding(
         padding: EdgeInsets.all(8.0),
         child: Column(
