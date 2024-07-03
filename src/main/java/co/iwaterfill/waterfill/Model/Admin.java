@@ -5,28 +5,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
-public class Employee {
-    @GeneratedValue
+public class Admin {
     @Id
+    @GeneratedValue
     private Long id;
     private String Name;
-    private String Address;
     private String Email;
     private String Username;
     private String Password;
     private String PhoneNumber;
 
-    Employee(){}
+    Admin(){}
 
-    public Employee(String name, String address, String email, String username, String password, String phonenumber){
+    public Admin(String name, String email, String username, String password, String phonenumber){
         Name = name;
-        Address =address;
         Email = email;
         Username = username;
         Password = password ;
         PhoneNumber = phonenumber;
     }
-
     
 
     public Long getId() {
@@ -35,10 +32,6 @@ public class Employee {
 
     public String getName() {
         return Name;
-    }
-
-    public String getAddress() {
-        return Address;
     }
 
     public String getEmail() {
@@ -61,10 +54,6 @@ public class Employee {
         Name = name;
     }
 
-    public void setAddress(String address) {
-        Address = address;
-    }
-
     public void setEmail(String email) {
         Email = email;
     }
@@ -80,8 +69,6 @@ public class Employee {
     public void setPhoneNumber(String phoneNumber) {
         PhoneNumber = phoneNumber;
     }
-
-    
 
     
 }
