@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(MaterialApp(
+    home: Dashboard(),
+  ));
+}
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
@@ -35,13 +41,6 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(20),
                 children: <Widget>[
                   buildDashboardButton(
-                    icon: Icons.person,
-                    label: 'PROFILE',
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
-                    },
-                  ),
-                  buildDashboardButton(
                     icon: Icons.history,
                     label: 'TRANSACTION HISTORY',
                     onPressed: () {
@@ -59,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icons.shopping_cart,
                     label: 'BUY WATER',
                     onPressed: () {
-                      // Navigate to Buy Water page
+                      Navigator.popAndPushNamed(context, '/buywater');
                     },
                   ),
                 ],
@@ -72,39 +71,43 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget buildDashboardButton({required IconData icon, required String label, required VoidCallback onPressed}) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue[100],
-        elevation: 5,
-        shadowColor: Colors.grey,
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 50,
-            color: Colors.blue[800],
+      elevation: 5,
+      shadowColor: Colors.grey,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[100],
+          foregroundColor: Colors.blue[800],
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
           ),
-          SizedBox(height: 10),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 50,
               color: Colors.blue[800],
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
             ),
-          ),
-        ],
+            SizedBox(height: 10),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.blue[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: Dashboard(),
-  ));
 }

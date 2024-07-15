@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:iwaterfill/services/user.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({super.key});
+  const Signup({Key? key}) : super(key: key);
 
   @override
   State<Signup> createState() => _SignupState();
@@ -16,9 +16,10 @@ class _SignupState extends State<Signup> {
   String name = '';
   String email = '';
   String password = '';
+  String phone = '';
+  String confirmPassword = '';
   bool _obscure = true;
   IconData _obscureIcon = Icons.visibility_off;
-  String confirmPassword = '';
 
   createAccount(User user) async {
     final response = await http.post(
@@ -30,6 +31,7 @@ class _SignupState extends State<Signup> {
         'username': user.username,
         'email': user.email,
         'password': user.password,
+        'phone': user.phone,
       }),
     );
     print(response.body);
@@ -40,8 +42,8 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blue[100],
-      body: Container(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
             child: Column(
@@ -54,21 +56,19 @@ class _SignupState extends State<Signup> {
                     children: [
                       Image.asset(
                         'assets/wafill.png',
-                        width: 450, // Adjust width as needed
-                        height: 200, // Adjust height as needed
+                        width: 300, // Adjust width as needed
+                        height: 100, // Adjust height as needed
                         fit: BoxFit.contain, // Adjust the fit as needed
                       ),
                     ],
                   ),
                 ),
                 Divider(
-                  height:40.0,
+                  height: 20.0,
                   color: Colors.blue[900],
                   thickness: 3.0,
                 ),
-
-
-                SizedBox(height: 30.0),
+                SizedBox(height: 20.0),
                 Form(
                   key: formKey,
                   child: Column(
@@ -93,7 +93,7 @@ class _SignupState extends State<Signup> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your name';
                           }
-                          if (value.length < 2) {
+                          if (value.length < 3) {
                             return 'Name should be at least 3 letters long';
                           }
                           return null;
@@ -136,6 +136,33 @@ class _SignupState extends State<Signup> {
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
+                        keyboardType: TextInputType.phone,
+                        maxLength: 15,
+                        decoration: InputDecoration(
+                          errorStyle: TextStyle(color: Colors.black),
+                          labelText: 'Phone Number',
+                          labelStyle: TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          prefixIcon: Icon(Icons.phone, color: Colors.black),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          // You can add more specific validation for phone number if needed
+                          return null;
+                        },
+                        onSaved: (value) {
+                          phone = value!;
+                        },
+                      ),
+                      SizedBox(height: 10.0),
+                      TextFormField(
+                        style: TextStyle(color: Colors.black),
                         enableInteractiveSelection: false,
                         obscureText: _obscure,
                         maxLength: 20,
@@ -173,19 +200,55 @@ class _SignupState extends State<Signup> {
                           if (value.length > 20) {
                             return 'Password must be 20 characters long only';
                           }
-                          // final passwordRegExp = RegExp(
-                          //     r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$&*]).{8,}$');
-                          // if (!passwordRegExp.hasMatch(value)) {
-                          //   return 'Password must contain at least one uppercase letter, '
-                          //       'one lowercase letter, one digit, and one special character.';
-                          // }
+                          // Add more specific password validation if needed
                           return null;
                         },
                         onSaved: (value) {
                           password = value!;
                         },
                       ),
-
+                      SizedBox(height: 10.0),
+                      TextFormField(
+                        style: TextStyle(color: Colors.black),
+                        obscureText: _obscure,
+                        maxLength: 20,
+                        decoration: InputDecoration(
+                          errorStyle: TextStyle(color: Colors.black),
+                          labelText: 'Confirm Password',
+                          labelStyle: TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          prefixIcon: Icon(Icons.lock, color: Colors.black),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscureIcon, color: Colors.black),
+                            onPressed: () {
+                              setState(() {
+                                _obscure = !_obscure;
+                                if (_obscure) {
+                                  _obscureIcon = Icons.visibility_off;
+                                } else {
+                                  _obscureIcon = Icons.visibility;
+                                }
+                              });
+                            },
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          }
+                          if (value != password) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          confirmPassword = value!;
+                        },
+                      ),
                       SizedBox(height: 10.0),
                       ElevatedButton(
                         onPressed: () {
@@ -195,13 +258,14 @@ class _SignupState extends State<Signup> {
                               username: name,
                               email: email,
                               password: password,
+                              phone: phone,
                             );
                             createAccount(user);
                             Navigator.pushReplacementNamed(context, '/login');
                           }
                         },
                         child: Text(
-                          'Create Account',
+                          'Register',
                           style: TextStyle(
                             letterSpacing: 1.0,
                           ),
@@ -228,13 +292,12 @@ class _SignupState extends State<Signup> {
                           Expanded(
                             child: Divider(
                               color: Colors.blue[900],
-                              height: 110,
+                              height: 100,
                             ),
                           ),
                         ],
                       ),
-
-                      SizedBox(height: 20.0),
+                      SizedBox(height: 5.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[

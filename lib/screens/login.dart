@@ -157,7 +157,9 @@ class _LoginState extends State<Login> {
                             User user = User(
                                 username: '',
                                 email: email,
-                                password: password);
+                                password: password,
+                                phone: '',
+                            );
                             setState(() {
                               buttonContent = FutureBuilder(
                                 future: login(user),
