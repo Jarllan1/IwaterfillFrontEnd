@@ -18,8 +18,25 @@ class _SignupState extends State<Signup> {
   String password = '';
   String phone = '';
   String confirmPassword = '';
-  bool _obscure = true;
-  IconData _obscureIcon = Icons.visibility_off;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  IconData _passwordVisibilityIcon = Icons.visibility_off;
+  IconData _confirmPasswordVisibilityIcon = Icons.visibility_off;
+
+  void togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+      _passwordVisibilityIcon = _obscurePassword ? Icons.visibility_off : Icons.visibility;
+    });
+  }
+
+  void toggleConfirmPasswordVisibility() {
+    setState(() {
+      _obscureConfirmPassword = !_obscureConfirmPassword;
+      _confirmPasswordVisibilityIcon = _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility;
+    });
+  }
 
   createAccount(User user) async {
     final response = await http.post(
@@ -64,9 +81,9 @@ class _SignupState extends State<Signup> {
                   ),
                 ),
                 Divider(
-                  height: 20.0,
+                  height: 25.0,
                   color: Colors.blue[900],
-                  thickness: 3.0,
+                  thickness: 2.0,
                 ),
                 SizedBox(height: 20.0),
                 Form(
@@ -164,7 +181,7 @@ class _SignupState extends State<Signup> {
                       TextFormField(
                         style: TextStyle(color: Colors.black),
                         enableInteractiveSelection: false,
-                        obscureText: _obscure,
+                        obscureText: _obscurePassword,
                         maxLength: 20,
                         decoration: InputDecoration(
                           errorStyle: TextStyle(color: Colors.black),
@@ -175,16 +192,9 @@ class _SignupState extends State<Signup> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           suffixIcon: IconButton(
-                            icon: Icon(_obscureIcon, color: Colors.black),
+                            icon: Icon(_passwordVisibilityIcon, color: Colors.black),
                             onPressed: () {
-                              setState(() {
-                                _obscure = !_obscure;
-                                if (_obscure) {
-                                  _obscureIcon = Icons.visibility_off;
-                                } else {
-                                  _obscureIcon = Icons.visibility;
-                                }
-                              });
+                              togglePasswordVisibility();
                             },
                           ),
                           filled: true,
@@ -210,7 +220,7 @@ class _SignupState extends State<Signup> {
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
-                        obscureText: _obscure,
+                        obscureText: _obscureConfirmPassword,
                         maxLength: 20,
                         decoration: InputDecoration(
                           errorStyle: TextStyle(color: Colors.black),
@@ -221,16 +231,9 @@ class _SignupState extends State<Signup> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           suffixIcon: IconButton(
-                            icon: Icon(_obscureIcon, color: Colors.black),
+                            icon: Icon(_confirmPasswordVisibilityIcon, color: Colors.black),
                             onPressed: () {
-                              setState(() {
-                                _obscure = !_obscure;
-                                if (_obscure) {
-                                  _obscureIcon = Icons.visibility_off;
-                                } else {
-                                  _obscureIcon = Icons.visibility;
-                                }
-                              });
+                              toggleConfirmPasswordVisibility();
                             },
                           ),
                           filled: true,
@@ -249,30 +252,33 @@ class _SignupState extends State<Signup> {
                           confirmPassword = value!;
                         },
                       ),
-                      SizedBox(height: 10.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
-                            User user = User(
-                              username: name,
-                              email: email,
-                              password: password,
-                              phone: phone,
-                            );
-                            createAccount(user);
-                            Navigator.pushReplacementNamed(context, '/login');
-                          }
-                        },
-                        child: Text(
-                          'Register',
-                          style: TextStyle(
-                            letterSpacing: 1.0,
+                      SizedBox(height: 15.0),
+                      SizedBox(
+                        height: 50.0,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              User user = User(
+                                username: name,
+                                email: email,
+                                password: password,
+                                phone: phone,
+                              );
+                              createAccount(user);
+                              Navigator.pushReplacementNamed(context, '/login');
+                            }
+                          },
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                              letterSpacing: 1.0,
+                            ),
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[900],
-                          foregroundColor: Colors.white,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[900],
+                            foregroundColor: Colors.white,
+                          ),
                         ),
                       ),
                       Row(
@@ -297,7 +303,6 @@ class _SignupState extends State<Signup> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 5.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -317,8 +322,7 @@ class _SignupState extends State<Signup> {
                                 fontSize: 15.0,
                               ),
                             ),
-                            onTap: () =>
-                                Navigator.popAndPushNamed(context, '/login'),
+                            onTap: () => Navigator.pushReplacementNamed(context, '/login'),
                           ),
                         ],
                       ),

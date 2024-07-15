@@ -149,37 +149,40 @@ class _LoginState extends State<Login> {
                           password = value!;
                         },
                       ),
-                      SizedBox(height: 5.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            formKey.currentState!.save();
-                            User user = User(
-                                username: '',
-                                email: email,
-                                password: password,
-                                phone: '',
-                            );
-                            setState(() {
-                              buttonContent = FutureBuilder(
-                                future: login(user),
-                                builder: (context, snapshots) {
-                                  if (snapshots.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return loadingDisplay;
-                                  }
-                                  if (snapshots.hasData) {}
-                                  return Text('Log in');
-                                },
+                      SizedBox(height: 10.0),
+                      SizedBox(
+                        height: 50.0,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              User user = User(
+                                  username: '',
+                                  email: email,
+                                  password: password,
+                                  phone: '',
                               );
-                            });
-                            Navigator.pushReplacementNamed(context, '/');
-                          }
-                        },
-                        child: buttonContent,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[900],
-                          foregroundColor: Colors.white,
+                              setState(() {
+                                buttonContent = FutureBuilder(
+                                  future: login(user),
+                                  builder: (context, snapshots) {
+                                    if (snapshots.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return loadingDisplay;
+                                    }
+                                    if (snapshots.hasData) {}
+                                    return Text('Log in',);
+                                  },
+                                );
+                              });
+                              Navigator.pushReplacementNamed(context, '/');
+                            }
+                          },
+                          child: buttonContent,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[900],
+                            foregroundColor: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(height: 50,),
@@ -215,6 +218,7 @@ class _LoginState extends State<Login> {
                             'Don\'t have an account?',
                             style: TextStyle(
                               color: Colors.black,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(
@@ -227,6 +231,7 @@ class _LoginState extends State<Login> {
                                 color: Colors.blue[900],
                                 decoration: TextDecoration.underline,
                                 fontSize: 15.0,
+                                fontWeight: FontWeight.bold
                               ),
                             ),
                             onTap: () =>

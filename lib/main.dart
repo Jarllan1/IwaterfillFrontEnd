@@ -7,7 +7,7 @@ import 'package:iwaterfill/screens/dashboard.dart';
 
 
 void main() => runApp(MaterialApp(
-  initialRoute: '/',
+  initialRoute: '/login',
   routes: {
     '/' : (context) => Dashboard(),
     '/signup' : (context) => Signup(),
