@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:iwaterfill/services/user.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,189 +15,235 @@ class _LoginState extends State<Login> {
   final formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  bool _obscure = true;
+  IconData _obscureIcon = Icons.visibility_off;
+
+  Widget buttonContent = Text('Log in');
+
+  Widget loadingDisplay = CircularProgressIndicator();
+
+  Future<bool> login(User user) async {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8080/api/v1/auth/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(<String, dynamic>{
+        'usernameOrEmail': user.email,
+        'password': user.password,
+      }),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+    // print(response.body);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[600],
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.blue[100],
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Text(
-                  'Welcome Back!',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2.0,
-                    fontSize: 26.0,
-                    color: Colors.black87,
-                    height: 4.0,
-
+        child: Container(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/wafill.png',
+                        width:450, // Adjust width as needed
+                        height: 200, // Adjust height as needed
+                        fit: BoxFit.contain, // Adjust the fit as needed
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: 5.0),
-              Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      maxLength: 60,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        labelStyle: TextStyle(color: Colors.black),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                        ),
-                        prefixIcon: Icon(Icons.email),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your email address';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        email = value!;
-                      },
-                    ),
-                    SizedBox(height: 10.0),
-                    TextFormField(
-                      obscureText: true,
-                      maxLength: 20,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(color: Colors.black),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                        ),
-                        prefixIcon: Icon(Icons.lock),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        if (value.length < 8) {
-                          return 'Password must be 8 or more characters';
-                        }
-                        if (value.length > 20) {
-                          return 'Password must be 20 characters long only';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        password = value!;
-                      },
-                    ),
-                    SizedBox(height: 5.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          formKey.currentState!.save();
-                          // Perform login logic here, e.g., send credentials to server
-                          print('Email: $email');
-                          print('Password: $password');
-                        }
-                      },
-                      child: Text(
-                        'Log in',
-                        style: TextStyle(
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(child: Divider(
-                          color: Colors.black,
-                          height: 60,
-                        ),),
-                        SizedBox(width: 5.0,),
-                        Text("or", style: TextStyle(color: Colors.amber),),
-                        SizedBox(width: 5.0,),
-                        Expanded(child: Divider(
-                          color: Colors.black,
-                          height: 60,
-                        ))
-                      ],
-                    ),
+                Divider(
+                  height: 40.0,
+                  color: Colors.blue[900],
+                  thickness: 3.0,
+                ),
 
-                    SizedBox(height: 15.0), // Adding space between the Facebook and Google buttons
-                    // Google Sign-In Button
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Placeholder for Google Sign-In
-                        print('Sign in with Google button pressed');
-                      },
-                      icon: Icon(Icons.login), // Icon for Google Sign-In
-                      label: Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          letterSpacing: 1.0,
+                SizedBox(height: 50.0),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      TextFormField(
+                        style: TextStyle(color: Colors.black),
+                        keyboardType: TextInputType.emailAddress,
+                        maxLength: 60,
+                        decoration: InputDecoration(
+                          errorStyle: TextStyle(color: Colors.black),
+                          labelText: 'Email',
+                          labelStyle: TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                          ),
+                          prefixIcon: Icon(Icons.email, color: Colors.black),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email address';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          email = value!;
+                        },
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-
-                    SizedBox(height: 5.0),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        // Placeholder for Facebook Sign-In
-                        print('Sign in with Facebook button pressed');
-                      },
-                      icon: Icon(Icons.facebook), // Icon for Facebook Sign-In
-                      label: Text(
-                        'Sign in with Facebook',
-                        style: TextStyle(
-                          letterSpacing: 1.0,
+                      SizedBox(height: 10.0),
+                      TextFormField(
+                        style: TextStyle(color: Colors.black),
+                        enableInteractiveSelection: false,
+                        obscureText: _obscure,
+                        maxLength: 20,
+                        decoration: InputDecoration(
+                          errorStyle: TextStyle(color: Colors.black),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.black),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25.0),
+                          ),
+                          prefixIcon: Icon(Icons.lock, color: Colors.black),
+                          suffixIcon: IconButton(
+                            icon: Icon(_obscureIcon, color: Colors.black),
+                            onPressed: () {
+                              setState(() {
+                                _obscure = !_obscure;
+                                if (_obscure) {
+                                  _obscureIcon = Icons.visibility_off;
+                                } else {
+                                  _obscureIcon = Icons.visibility;
+                                }
+                              });
+                            },
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 8) {
+                            return 'Password must be 8 or more characters';
+                          }
+                          if (value.length > 20) {
+                            return 'Password must be 20 characters long only';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          password = value!;
+                        },
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-
-                    SizedBox(height: 50.0,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Dont have an account?',
-                          style: TextStyle(
-                            color: Colors.black,
+                      SizedBox(height: 10.0),
+                      SizedBox(
+                        height: 50.0,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              formKey.currentState!.save();
+                              User user = User(
+                                  username: '',
+                                  email: email,
+                                  password: password,
+                                  phone: '',
+                              );
+                              setState(() {
+                                buttonContent = FutureBuilder(
+                                  future: login(user),
+                                  builder: (context, snapshots) {
+                                    if (snapshots.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return loadingDisplay;
+                                    }
+                                    if (snapshots.hasData) {}
+                                    return Text('Log in',);
+                                  },
+                                );
+                              });
+                              Navigator.pushReplacementNamed(context, '/');
+                            }
+                          },
+                          child: buttonContent,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue[900],
+                            foregroundColor: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 5.0,),
-                        InkWell(
-                          child: Text(
-                            'Signup Here',
-                            style: TextStyle(
-                              color: Colors.amber,
-                              decoration: TextDecoration.underline,
-                              fontSize: 15.0,
+                      ),
+                      SizedBox(height: 50,),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.blue[900],
+                              height: 50,
                             ),
                           ),
-                          onTap: ()=> Navigator.popAndPushNamed(context, '/signup'),
-                        ),
-                      ],
-                    ),
-                  ],
+                          SizedBox(width: 10.0),
+                          Text(
+                            "or",
+                            style: TextStyle(color: Colors.blue[900]),
+                          ),
+                          SizedBox(width: 10.0),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.blue[900],
+                              height: 50,
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 50.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Don\'t have an account?',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          InkWell(
+                            child: Text(
+                              'Signup Here',
+                              style: TextStyle(
+                                color: Colors.blue[900],
+                                decoration: TextDecoration.underline,
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            onTap: () =>
+                                Navigator.popAndPushNamed(context, '/signup'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
