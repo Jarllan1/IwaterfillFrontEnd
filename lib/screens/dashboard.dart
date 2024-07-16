@@ -58,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icons.shopping_cart,
                     label: 'BUY WATER',
                     onPressed: () {
-                      Navigator.popAndPushNamed(context, '/buywater');
+                      Navigator.popAndPushNamed(context, '/item');
                     },
                   ),
                 ],
