@@ -44,7 +44,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icons.history,
                     label: 'TRANSACTION HISTORY',
                     onPressed: () {
-                      // Navigate to Transaction History page
+                      Navigator.popAndPushNamed(context, '/transactionhistory');
                     },
                   ),
                   buildDashboardButton(
