@@ -57,10 +57,11 @@ class _TransactionhistoryState extends State<Transactionhistory> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, '/'); // Navigate back to the previous screen
+            Navigator.popAndPushNamed(context, '/');
           },
         ),
       ),
+
       body: Column(
         children: [
           Padding(

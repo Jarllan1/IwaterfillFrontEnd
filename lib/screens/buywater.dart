@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iwaterfill/screens/payment.dart';
 
 class BuyWater extends StatefulWidget {
   const BuyWater({super.key});
@@ -32,10 +33,11 @@ class _BuyWaterState extends State<BuyWater> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context, '/'); // Navigate back to the previous screen
+            Navigator.popAndPushNamed(context, '/');// Navigate back to the previous screen
           },
         ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -107,11 +109,13 @@ class _BuyWaterState extends State<BuyWater> {
             ),
             SizedBox(height: 16.0),
 
-            // Place Order Button
             ElevatedButton(
               onPressed: () {
-                // Implement your order placement logic here
-                print('Order Placed');
+                // Navigate to the Payment screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Payment()),
+                );
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -128,7 +132,6 @@ class _BuyWaterState extends State<BuyWater> {
     );
   }
 }
-
 void main() {
   runApp(MaterialApp(
     home: BuyWater(),
