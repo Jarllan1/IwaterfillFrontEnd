@@ -160,7 +160,6 @@ class _LoginState extends State<Login> {
                                   username: '',
                                   email: email,
                                   password: password,
-                                  phone: '',
                               );
                               setState(() {
                                 buttonContent = FutureBuilder(

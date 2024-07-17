@@ -4,7 +4,6 @@ class Product {
   double price;
   String url;
 
-
   Product({
     required this.id,
     required this.productName,
@@ -14,7 +13,7 @@ class Product {
   factory Product.fromJson(Map<String, dynamic>json){
     return switch(json){
       {
-      'id' : int id,
+        'id' : int id,
       'productName' : String productName,
       'price' : double price,
       'url' : String url,

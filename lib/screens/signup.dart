@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iwaterfill/screens/userdetailfform.dart';
 import 'package:iwaterfill/services/user.dart';
 
 class Signup extends StatefulWidget {
@@ -16,43 +17,57 @@ class _SignupState extends State<Signup> {
   String name = '';
   String email = '';
   String password = '';
-  String phone = '';
   String confirmPassword = '';
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  IconData _obscurePasswordIcon = Icons.visibility_off;
+  IconData _obscureConfirmPasswordIcon = Icons.visibility_off;
 
-  IconData _passwordVisibilityIcon = Icons.visibility_off;
-  IconData _confirmPasswordVisibilityIcon = Icons.visibility_off;
+  // void togglePasswordVisibility() {
+  //   setState(() {
+  //     _obscurePassword = !_obscurePassword;
+  //     _obscurePasswordIcon = _obscurePassword ? Icons.visibility_off : Icons.visibility;
+  //   });
+  // }
+  //
+  // void toggleConfirmPasswordVisibility() {
+  //   setState(() {
+  //     _obscureConfirmPassword = !_obscureConfirmPassword;
+  //     _obscureConfirmPasswordIcon = _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility;
+  //   });
+  // }
 
-  void togglePasswordVisibility() {
-    setState(() {
-      _obscurePassword = !_obscurePassword;
-      _passwordVisibilityIcon = _obscurePassword ? Icons.visibility_off : Icons.visibility;
-    });
+  Future<void> createAccount(User user) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/api/v1/auth/register/user'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'username': user.username,
+          'email': user.email,
+          'password': user.password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Registration successful, navigate to login screen
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        // Handle other status codes or errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response.reasonPhrase}')),
+        );
+      }
+    } catch (e) {
+      // Handle network or other errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
   }
 
-  void toggleConfirmPasswordVisibility() {
-    setState(() {
-      _obscureConfirmPassword = !_obscureConfirmPassword;
-      _confirmPasswordVisibilityIcon = _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility;
-    });
-  }
-
-  createAccount(User user) async {
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/api/v1/auth/register/user'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, dynamic>{
-        'username': user.username,
-        'email': user.email,
-        'password': user.password,
-        'phone': user.phone,
-      }),
-    );
-    print(response.body);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,9 +88,9 @@ class _SignupState extends State<Signup> {
                     children: [
                       Image.asset(
                         'assets/wafill.png',
-                        width: 300, // Adjust width as needed
-                        height: 100, // Adjust height as needed
-                        fit: BoxFit.contain, // Adjust the fit as needed
+                        width: 300,
+                        height: 100,
+                        fit: BoxFit.contain,
                       ),
                     ],
                   ),
@@ -150,33 +165,7 @@ class _SignupState extends State<Signup> {
                           email = value!;
                         },
                       ),
-                      SizedBox(height: 10.0),
-                      TextFormField(
-                        style: TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.phone,
-                        maxLength: 15,
-                        decoration: InputDecoration(
-                          errorStyle: TextStyle(color: Colors.black),
-                          labelText: 'Phone Number',
-                          labelStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          prefixIcon: Icon(Icons.phone, color: Colors.black),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your phone number';
-                          }
-                          // You can add more specific validation for phone number if needed
-                          return null;
-                        },
-                        onSaved: (value) {
-                          phone = value!;
-                        },
-                      ),
+
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
@@ -192,9 +181,12 @@ class _SignupState extends State<Signup> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           suffixIcon: IconButton(
-                            icon: Icon(_passwordVisibilityIcon, color: Colors.black),
+                            icon: Icon(_obscurePasswordIcon, color: Colors.black),
                             onPressed: () {
-                              togglePasswordVisibility();
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                                _obscurePasswordIcon = _obscurePassword ? Icons.visibility_off : Icons.visibility;
+                              });
                             },
                           ),
                           filled: true,
@@ -213,8 +205,8 @@ class _SignupState extends State<Signup> {
                           // Add more specific password validation if needed
                           return null;
                         },
-                        onSaved: (value) {
-                          password = value!;
+                        onChanged: (value) {
+                          password = value;
                         },
                       ),
                       SizedBox(height: 10.0),
@@ -231,9 +223,12 @@ class _SignupState extends State<Signup> {
                           ),
                           prefixIcon: Icon(Icons.lock, color: Colors.black),
                           suffixIcon: IconButton(
-                            icon: Icon(_confirmPasswordVisibilityIcon, color: Colors.black),
+                            icon: Icon(_obscureConfirmPasswordIcon, color: Colors.black),
                             onPressed: () {
-                              toggleConfirmPasswordVisibility();
+                              setState(() {
+                                _obscureConfirmPassword = !_obscureConfirmPassword;
+                                _obscureConfirmPasswordIcon = _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility;
+                              });
                             },
                           ),
                           filled: true,
@@ -248,8 +243,8 @@ class _SignupState extends State<Signup> {
                           }
                           return null;
                         },
-                        onSaved: (value) {
-                          confirmPassword = value!;
+                        onChanged: (value) {
+                          confirmPassword = value;
                         },
                       ),
                       SizedBox(height: 15.0),
@@ -259,14 +254,20 @@ class _SignupState extends State<Signup> {
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
-                              User user = User(
-                                username: name,
-                                email: email,
-                                password: password,
-                                phone: phone,
-                              );
-                              createAccount(user);
-                              Navigator.pushReplacementNamed(context, '/login');
+                              if (password == confirmPassword) {
+                                User user = User(username: name, email: email, password: password,);
+                                createAccount(user);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Userdetailfform(email: user.email)
+                                  )
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Passwords do not match')),
+                                );
+                              }
                             }
                           },
                           child: Text(
@@ -281,6 +282,7 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                       ),
+
                       Row(
                         children: <Widget>[
                           Expanded(
