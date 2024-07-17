@@ -8,7 +8,7 @@ import 'package:iwaterfill/screens/transactionhistory.dart';
 
 
 void main() => runApp(MaterialApp(
-  initialRoute: '/transactionhistory',
+  initialRoute: '/',
   routes: {
     '/' : (context) => Dashboard(),
     '/signup' : (context) => Signup(),

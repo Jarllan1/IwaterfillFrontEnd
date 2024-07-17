@@ -13,19 +13,31 @@ class _BuyWaterState extends State<BuyWater> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
+  int? _selectedItem; // Variable to track the selected item
+
+  final List<Map<String, String>> _items = [
+    {'label': 'Container', 'image': 'assets/CONTAINER.png'},
+    {'label': 'Dispenser', 'image': 'assets/ROUND CONTAINER.png'},
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blue[200],
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         centerTitle: true,
         title: Text('Make Purchase'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, '/'); // Navigate back to the previous screen
+          },
+        ),
       ),
       body: Padding(
-
         padding: const EdgeInsets.all(16.0),
-
         child: Column(
           children: [
             TextField(
@@ -36,24 +48,33 @@ class _BuyWaterState extends State<BuyWater> {
             ),
             SizedBox(height: 16.0),
 
-            // Item Field (with image)
-            Row(
-              children: [
-                Text(
-                  'ITEM',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                SizedBox(width: 10.0),
-                Image.asset(
-                  'assets/contain.jpg', // Make sure to add the image in the assets folder
-                  height: 50.0,
-                  width: 50.0,
-                ),
-                // Image.asset('assets/dispen.jpg',
-                // height: 80.0,
-                //   width: 50.0,
-                // )
-              ],
+            // Radio buttons with images
+            Column(
+              children: _items.asMap().entries.map((entry) {
+                int idx = entry.key;
+                Map<String, String> item = entry.value;
+
+                return Row(
+                  children: [
+                    Radio<int>(
+                      value: idx,
+                      groupValue: _selectedItem,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedItem = value;
+                        });
+                      },
+                    ),
+                    Image.asset(
+                      item['image']!,
+                      height: 50.0,
+                      width: 50.0,
+                    ),
+                    SizedBox(width: 10.0),
+                    Text(item['label']!, style: TextStyle(fontSize: 16.0)),
+                  ],
+                );
+              }).toList(),
             ),
             SizedBox(height: 16.0),
 
