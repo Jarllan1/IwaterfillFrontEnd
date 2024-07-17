@@ -41,6 +41,14 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(20),
                 children: <Widget>[
                   buildDashboardButton(
+                    icon: Icons.person,
+                    label: 'PROFILE',
+                    onPressed: () {
+                      // Navigate to Profile page
+                      Navigator.pushNamed(context, '/profile');
+                    },
+                  ),
+                  buildDashboardButton(
                     icon: Icons.history,
                     label: 'TRANSACTION HISTORY',
                     onPressed: () {
@@ -61,6 +69,7 @@ class _DashboardState extends State<Dashboard> {
                       Navigator.popAndPushNamed(context, '/buywater');
                     },
                   ),
+
                 ],
               ),
             ),
@@ -111,3 +120,4 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
+
