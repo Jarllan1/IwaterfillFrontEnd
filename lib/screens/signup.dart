@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:iwaterfill/screens/userdetailfform.dart';
 import 'package:iwaterfill/services/user.dart';
 
 class Signup extends StatefulWidget {
@@ -16,7 +17,6 @@ class _SignupState extends State<Signup> {
   String name = '';
   String email = '';
   String password = '';
-  String phone = '';
   String confirmPassword = '';
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -48,7 +48,6 @@ class _SignupState extends State<Signup> {
           'username': user.username,
           'email': user.email,
           'password': user.password,
-          'phone': user.phone,
         }),
       );
 
@@ -166,33 +165,7 @@ class _SignupState extends State<Signup> {
                           email = value!;
                         },
                       ),
-                      SizedBox(height: 10.0),
-                      TextFormField(
-                        style: TextStyle(color: Colors.black),
-                        keyboardType: TextInputType.phone,
-                        maxLength: 15,
-                        decoration: InputDecoration(
-                          errorStyle: TextStyle(color: Colors.black),
-                          labelText: 'Phone Number',
-                          labelStyle: TextStyle(color: Colors.black),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          prefixIcon: Icon(Icons.phone, color: Colors.black),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your phone number';
-                          }
-                          // You can add more specific validation for phone number if needed
-                          return null;
-                        },
-                        onSaved: (value) {
-                          phone = value!;
-                        },
-                      ),
+
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
@@ -282,8 +255,14 @@ class _SignupState extends State<Signup> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (password == confirmPassword) {
-                                User user = User(username: name, email: email, password: password, phone: phone);
+                                User user = User(username: name, email: email, password: password,);
                                 createAccount(user);
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Userdetailfform(email: user.email)
+                                  )
+                                );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Passwords do not match')),

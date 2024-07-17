@@ -5,13 +5,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iwaterfill/services/product.dart';
 
 void main() {
-  // Create a dummy Product object (replace with actual data from your app)
-  // Product product = Product(
-  //   id: 1,
-  //   productName: 'Water Bottle',
-  //   price: 10.0,
-  //   url: 'https://d2j6dbq0eux0bg.cloudfront.net/images/33715135/1567110047.jpg',
-  // );
 
   runApp(MaterialApp(
     home: BuyWater(), // Pass the product object to BuyWater widget
@@ -48,8 +41,15 @@ class _BuyWaterState extends State<BuyWater> {
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         centerTitle: true,
-        title: Text('Make Purchase'),
+        title: Text('𝓜𝓪𝓴𝓮 𝓟𝓾𝓻𝓬𝓱𝓪𝓼𝓮'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.popAndPushNamed(context, '/');
+          },
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
