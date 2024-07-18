@@ -23,19 +23,6 @@ class _SignupState extends State<Signup> {
   IconData _obscurePasswordIcon = Icons.visibility_off;
   IconData _obscureConfirmPasswordIcon = Icons.visibility_off;
 
-  // void togglePasswordVisibility() {
-  //   setState(() {
-  //     _obscurePassword = !_obscurePassword;
-  //     _obscurePasswordIcon = _obscurePassword ? Icons.visibility_off : Icons.visibility;
-  //   });
-  // }
-  //
-  // void toggleConfirmPasswordVisibility() {
-  //   setState(() {
-  //     _obscureConfirmPassword = !_obscureConfirmPassword;
-  //     _obscureConfirmPasswordIcon = _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility;
-  //   });
-  // }
 
   Future<void> createAccount(User user) async {
     try {

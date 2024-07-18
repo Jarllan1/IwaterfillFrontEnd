@@ -19,7 +19,6 @@ class _LoginState extends State<Login> {
   IconData _obscureIcon = Icons.visibility_off;
 
   Widget buttonContent = Text('Log in');
-
   Widget loadingDisplay = CircularProgressIndicator();
 
   Future<bool> login(User user) async {
@@ -37,7 +36,6 @@ class _LoginState extends State<Login> {
       return true;
     }
     return false;
-    // print(response.body);
   }
 
   @override
@@ -59,7 +57,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Image.asset(
                         'assets/wafill.png',
-                        width:450, // Adjust width as needed
+                        width: 450, // Adjust width as needed
                         height: 200, // Adjust height as needed
                         fit: BoxFit.contain, // Adjust the fit as needed
                       ),
@@ -71,7 +69,6 @@ class _LoginState extends State<Login> {
                   color: Colors.blue[900],
                   thickness: 3.0,
                 ),
-
                 SizedBox(height: 50.0),
                 Form(
                   key: formKey,
@@ -153,28 +150,31 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         height: 50.0,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               User user = User(
-                                  username: '',
-                                  email: email,
-                                  password: password,
+                                username: '',
+                                email: email,
+                                password: password,
                               );
                               setState(() {
-                                buttonContent = FutureBuilder(
-                                  future: login(user),
-                                  builder: (context, snapshots) {
-                                    if (snapshots.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return loadingDisplay;
-                                    }
-                                    if (snapshots.hasData) {}
-                                    return Text('Log in',);
-                                  },
-                                );
+                                buttonContent = loadingDisplay;
                               });
-                              Navigator.pushReplacementNamed(context, '/');
+
+                              bool success = await login(user);
+                              if (success) {
+                                Navigator.pushReplacementNamed(context, '/');
+                              } else {
+                                setState(() {
+                                  buttonContent = Text('Log in');
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Login failed. Please check your credentials.'),
+                                  ),
+                                );
+                              }
                             }
                           },
                           child: buttonContent,
@@ -184,7 +184,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 50,),
+                      SizedBox(height: 50),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -230,11 +230,10 @@ class _LoginState extends State<Login> {
                                 color: Colors.blue[900],
                                 decoration: TextDecoration.underline,
                                 fontSize: 15.0,
-                                fontWeight: FontWeight.bold
                               ),
                             ),
                             onTap: () =>
-                                Navigator.popAndPushNamed(context, '/signup'),
+                                Navigator.pushReplacementNamed(context, '/signup'),
                           ),
                         ],
                       ),
