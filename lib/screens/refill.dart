@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:iwaterfill/screens/dashboard.dart';
 
-class BuyWater extends StatefulWidget {
-  const BuyWater({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class Refill extends StatefulWidget {
+  const Refill({Key? key}) : super(key: key);
 
   @override
-  State<BuyWater> createState() => _BuyWaterState();
+  _RefillState createState() => _RefillState();
 }
 
-class _BuyWaterState extends State<BuyWater> {
+class _RefillState extends State<Refill> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -17,8 +18,8 @@ class _BuyWaterState extends State<BuyWater> {
   List<int> _quantities = [];
 
   final List<Map<String, dynamic>> _items = [
-    {'label': 'Container', 'image': 'assets/CONTAINER.png', 'price': 250},
-    {'label': 'Dispenser', 'image': 'assets/ROUND CONTAINER.png', 'price': 300},
+    {'label': '5 Gallon', 'image': 'assets/5gallon.png', 'price': 150},
+    {'label': '3 Gallon', 'image': 'assets/3gallon.png', 'price': 100},
   ];
 
   @override
@@ -29,13 +30,12 @@ class _BuyWaterState extends State<BuyWater> {
 
     _dateController.addListener(() {
       final text = _dateController.text;
-      _dateController.value = _dateController.value.copyWith(
+      _dateController.value = TextEditingValue(
         text: _formatDate(text),
         selection: TextSelection.collapsed(offset: _formatDate(text).length),
       );
     });
   }
-
 
   String _formatDate(String text) {
     text = text.replaceAll(RegExp(r'[^0-9]'), '');
@@ -57,6 +57,14 @@ class _BuyWaterState extends State<BuyWater> {
   }
 
   @override
+  void dispose() {
+    _locationController.dispose();
+    _amountController.dispose();
+    _dateController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -64,17 +72,18 @@ class _BuyWaterState extends State<BuyWater> {
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         centerTitle: true,
-        title: Text('Make purchase'),
+        title: Text('Make Refill'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.popAndPushNamed(context, '/');
+            Navigator.pop(context);
           },
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _dateController,
@@ -176,17 +185,16 @@ class _BuyWaterState extends State<BuyWater> {
             // Place Order Button
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Dashboard()),
-                );
+                // Implement logic to place refill order
+                // For now, navigate back to the dashboard
+                Navigator.pop(context);
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.shopping_cart),
                   SizedBox(width: 10.0),
-                  Text('Place Order'),
+                  Text('Place Refill Order'),
                 ],
               ),
             ),
@@ -199,6 +207,6 @@ class _BuyWaterState extends State<BuyWater> {
 
 void main() {
   runApp(MaterialApp(
-    home: BuyWater(),
+    home: Refill(),
   ));
 }
