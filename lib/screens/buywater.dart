@@ -41,7 +41,7 @@ class _BuyWaterState extends State<BuyWater> {
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         centerTitle: true,
-        title: Text('𝓜𝓪𝓴𝓮 𝓟𝓾𝓻𝓬𝓱𝓪𝓼𝓮'),
+        title: Text('Make purchase'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {

@@ -45,7 +45,7 @@ class _DashboardState extends State<Dashboard> {
                     label: 'PROFILE',
                     onPressed: () {
                       // Navigate to Profile page
-                      Navigator.pushNamed(context, '/profile');
+                      // Navigator.pushNamed(context, '/pr');
                     },
                   ),
                   buildDashboardButton(
@@ -56,20 +56,19 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   buildDashboardButton(
-                    icon: Icons.local_shipping,
-                    label: 'DELIVERY STATUS',
-                    onPressed: () {
-                      // Navigate to Delivery Status page
-                    },
-                  ),
-                  buildDashboardButton(
                     icon: Icons.shopping_cart,
                     label: 'BUY WATER',
                     onPressed: () {
                       Navigator.popAndPushNamed(context, '/buywater');
                     },
                   ),
-
+                  buildDashboardButton(
+                    icon: Icons.logout,
+                    label: 'LOG OUT',
+                    onPressed: () {
+                      Navigator.popAndPushNamed(context, '/login');
+                    },
+                  ),
                 ],
               ),
             ),
@@ -120,4 +119,3 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 }
-
