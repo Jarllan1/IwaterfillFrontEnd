@@ -230,7 +230,6 @@ class _LoginState extends State<Login> {
                                 color: Colors.blue[900],
                                 decoration: TextDecoration.underline,
                                 fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             onTap: () =>
