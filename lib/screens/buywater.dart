@@ -1,9 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:iwaterfill/screens/payment.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:iwaterfill/services/product.dart';
+
+void main() {
+
+  runApp(MaterialApp(
+    home: BuyWater(), // Pass the product object to BuyWater widget
+  ));
+}
 
 class BuyWater extends StatefulWidget {
 
@@ -19,13 +25,6 @@ class _BuyWaterState extends State<BuyWater> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
-  int? _selectedItem; // Variable to track the selected item
-
-  final List<Map<String, String>> _items = [
-    {'label': 'Container', 'image': 'assets/CONTAINER.png'},
-    {'label': 'Dispenser', 'image': 'assets/ROUND CONTAINER.png'},
-  ];
-
   @override
   void dispose() {
     // Clean up the controllers when the widget is disposed
@@ -38,7 +37,6 @@ class _BuyWaterState extends State<BuyWater> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blue[200],
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
@@ -65,33 +63,20 @@ class _BuyWaterState extends State<BuyWater> {
             ),
             SizedBox(height: 16.0),
 
-            // Radio buttons with images
-            Column(
-              children: _items.asMap().entries.map((entry) {
-                int idx = entry.key;
-                Map<String, String> item = entry.value;
-
-                return Row(
-                  children: [
-                    Radio<int>(
-                      value: idx,
-                      groupValue: _selectedItem,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedItem = value;
-                        });
-                      },
-                    ),
-                    Image.asset(
-                      item['image']!,
-                      height: 50.0,
-                      width: 50.0,
-                    ),
-                    SizedBox(width: 10.0),
-                    Text(item['label']!, style: TextStyle(fontSize: 16.0)),
-                  ],
-                );
-              }).toList(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Item',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                SizedBox(width: 10.0),
+                // Image.network(
+                //   widget.product.url, // Display product image from URL
+                //   height: 50.0,
+                //   width: 50.0,
+                // ),
+              ],
             ),
             SizedBox(height: 16.0),
 
@@ -120,21 +105,21 @@ class _BuyWaterState extends State<BuyWater> {
               ),
             ),
             SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate to the Payment screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Payment()),
-                );
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.shopping_cart),
-                  SizedBox(width: 10.0),
-                  Text('PLACE ORDER'),
-                ],
+
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Implement your order placement logic here
+                  print('Order Placed');
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    SizedBox(width: 10.0),
+                    Text('PLACE ORDER'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -143,9 +128,3 @@ class _BuyWaterState extends State<BuyWater> {
     );
   }
 }
-void main() {
-  runApp(MaterialApp(
-    home: BuyWater(),
-  ));
-}
-
