@@ -234,7 +234,7 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                             onTap: () =>
-                                Navigator.popAndPushNamed(context, '/signup'),
+                                Navigator.pushReplacementNamed(context, '/signup'),
                           ),
                         ],
                       ),
