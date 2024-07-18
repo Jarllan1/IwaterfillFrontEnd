@@ -7,7 +7,7 @@ import 'package:iwaterfill/services/product.dart';
 void main() {
 
   runApp(MaterialApp(
-    home: BuyWater(),
+    home: BuyWater(), // Pass the product object to BuyWater widget
   ));
 }
 
