@@ -55,13 +55,7 @@ class _DashboardState extends State<Dashboard> {
                       Navigator.popAndPushNamed(context, '/transactionhistory');
                     },
                   ),
-                  buildDashboardButton(
-                    icon: Icons.local_shipping,
-                    label: 'DELIVERY STATUS',
-                    onPressed: () {
-                      // Navigate to Delivery Status page
-                    },
-                  ),
+
                   buildDashboardButton(
                     icon: Icons.shopping_cart,
                     label: 'BUY WATER',
