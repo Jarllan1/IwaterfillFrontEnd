@@ -89,6 +89,13 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   buildDashboardButton(
+                    icon: Icons.water,
+                    label: 'REFILL',
+                    onPressed: () {
+                      Navigator.popAndPushNamed(context, '/refill');
+                    },
+                  ),
+                  buildDashboardButton(
                     icon: Icons.logout,
                     label: 'LOG OUT',
                     onPressed: () {

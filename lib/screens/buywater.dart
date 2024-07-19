@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // Import FilteringTextInputFormatter
-import 'package:iwaterfill/screens/payment.dart';
+import 'package:flutter/services.dart';
+import 'package:iwaterfill/screens/dashboard.dart';
 
 class BuyWater extends StatefulWidget {
   const BuyWater({super.key});
@@ -12,9 +12,9 @@ class BuyWater extends StatefulWidget {
 class _BuyWaterState extends State<BuyWater> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController(); // Controller for DATE field
+  final TextEditingController _dateController = TextEditingController();
 
-  List<int> _quantities = []; // List to store quantities for each item
+  List<int> _quantities = [];
 
   final List<Map<String, dynamic>> _items = [
     {'label': 'Container', 'image': 'assets/CONTAINER.png', 'price': 250},
@@ -24,10 +24,9 @@ class _BuyWaterState extends State<BuyWater> {
   @override
   void initState() {
     super.initState();
-    // Initialize quantities list with 0 for each item
+
     _quantities = List<int>.filled(_items.length, 0);
 
-    // Attach listener to date controller to format as MM/DD/YYYY
     _dateController.addListener(() {
       final text = _dateController.text;
       _dateController.value = _dateController.value.copyWith(
@@ -37,9 +36,9 @@ class _BuyWaterState extends State<BuyWater> {
     });
   }
 
-  // Function to format the date MM/DD/YYYY
+
   String _formatDate(String text) {
-    text = text.replaceAll(RegExp(r'[^0-9]'), ''); // Remove non-numeric characters
+    text = text.replaceAll(RegExp(r'[^0-9]'), '');
     if (text.length >= 3) {
       text = text.substring(0, 2) + '/' + text.substring(2);
     }
@@ -54,7 +53,7 @@ class _BuyWaterState extends State<BuyWater> {
     for (int i = 0; i < _items.length; i++) {
       totalAmount += _quantities[i] * _items[i]['price'];
     }
-    _amountController.text = '₱' + totalAmount.toStringAsFixed(2); // Prefix with peso sign
+    _amountController.text = '₱' + totalAmount.toStringAsFixed(2);
   }
 
   @override
@@ -69,7 +68,7 @@ class _BuyWaterState extends State<BuyWater> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.popAndPushNamed(context, '/'); // Navigate back to the previous screen
+            Navigator.popAndPushNamed(context, '/');
           },
         ),
       ),
@@ -80,7 +79,7 @@ class _BuyWaterState extends State<BuyWater> {
             TextField(
               controller: _dateController,
               inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly, // Accepts only digits
+                FilteringTextInputFormatter.digitsOnly,
               ],
               decoration: InputDecoration(
                 labelText: 'DATE',
@@ -89,7 +88,6 @@ class _BuyWaterState extends State<BuyWater> {
             ),
             SizedBox(height: 16.0),
 
-            // List of items with quantities
             ListView.builder(
               shrinkWrap: true,
               itemCount: _items.length,
@@ -180,7 +178,7 @@ class _BuyWaterState extends State<BuyWater> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Payment()),
+                  MaterialPageRoute(builder: (context) => Dashboard()),
                 );
               },
               child: Row(
@@ -188,7 +186,7 @@ class _BuyWaterState extends State<BuyWater> {
                 children: [
                   Icon(Icons.shopping_cart),
                   SizedBox(width: 10.0),
-                  Text('PLACE ORDER'),
+                  Text('Place Order'),
                 ],
               ),
             ),
