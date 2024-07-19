@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iwaterfill/screens/buywater.dart';
 import 'package:iwaterfill/screens/login.dart';
 import 'package:iwaterfill/screens/payment.dart';
+// import 'package:iwaterfill/screens/profile.dart';
 import 'package:iwaterfill/screens/signup.dart';
 import 'package:iwaterfill/screens/dashboard.dart';
 import 'package:iwaterfill/screens/transactionhistory.dart';
@@ -9,7 +10,7 @@ import 'package:iwaterfill/screens/transactionhistory.dart';
 
 
 void main() => runApp(MaterialApp(
-  initialRoute: '/',
+  initialRoute: '/login',
   routes: {
     '/' : (context) => Dashboard(),
     '/signup' : (context) => Signup(),
@@ -17,6 +18,7 @@ void main() => runApp(MaterialApp(
     '/buywater' : (context) => BuyWater(),
     '/transactionhistory' : (context) => Transactionhistory(),
     '/payment': (context) => Payment(),
+    // '/profile' : (context) => Profile(),
   },
 ));
 
