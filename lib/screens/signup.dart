@@ -245,10 +245,10 @@ class _SignupState extends State<Signup> {
                                 User user = User(username: name, email: email, password: password,);
                                 createAccount(user);
                                 Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Userdetailfform(email: user.email)
-                                  )
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Userdetailfform(email: user.email)
+                                    )
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(

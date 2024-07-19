@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:iwaterfill/services/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -20,6 +22,24 @@ class _LoginState extends State<Login> {
 
   Widget buttonContent = Text('Log in');
   Widget loadingDisplay = CircularProgressIndicator();
+
+  Future<String> _saveCredentials(String _email, String _password) async{
+    try{
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', _email);
+      await prefs.setString('password', _password);
+
+      setState(() {
+        _email = email;
+        _password = password;
+      });
+
+      return '';
+    }catch(err){
+      return err.toString();
+    }
+  }
 
   Future<bool> login(User user) async {
     final response = await http.post(
@@ -164,7 +184,14 @@ class _LoginState extends State<Login> {
 
                               bool success = await login(user);
                               if (success) {
-                                Navigator.pushReplacementNamed(context, '/');
+                                _saveCredentials(email, password).then((result){
+                                  if(result == ''){
+                                    Navigator.pushReplacementNamed(context, '/');
+                                  }else{
+                                    print(result);
+                                  }
+                                });
+
                               } else {
                                 setState(() {
                                   buttonContent = Text('Log in');
