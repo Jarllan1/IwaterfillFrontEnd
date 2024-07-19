@@ -24,8 +24,8 @@
 //
 //   Future<void> profile(Userdetail userdetail) async {
 //     try {
-//       final response = await http.post(
-//         Uri.parse('http://10.0.2.2:8080/api/v1/auth/email'),
+//       final response = await http.get(
+//         Uri.parse('http://10.0.2.2:8080/api/v1/profile/email'),
 //         headers: <String, String>{
 //           'Content-Type': 'application/json; charset=UTF-8',
 //         },
