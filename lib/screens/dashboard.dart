@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -14,6 +15,32 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  Future<Map<String,String>> _loadCredentials() async {
+    try{
+      final prefs = await SharedPreferences.getInstance();
+      String _email = await prefs.get('email').toString();
+      String _password = await prefs.get('password').toString();
+
+      return <String, String>{
+        'email' : _email,
+        'password' : _password
+      };
+    }catch (err){
+      return <String, String>{
+        'error': err.toString()
+      };
+    }
+  }
+
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadCredentials().then((result){
+      print(result['email']);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,8 +71,7 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icons.person,
                     label: 'PROFILE',
                     onPressed: () {
-                      // Navigate to Profile page
-                      // Navigator.pushNamed(context, '/pr');
+                      Navigator.pushNamed(context, '/profile');
                     },
                   ),
                   buildDashboardButton(
