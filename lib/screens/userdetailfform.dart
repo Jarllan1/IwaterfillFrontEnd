@@ -107,7 +107,7 @@ class _SignupState extends State<Userdetailfform> {
                     children: <Widget>[
                       TextFormField(
                         style: TextStyle(color: Colors.black),
-                        maxLength: 60,
+                        maxLength: 11,  // Adjusted to limit the input to 11 characters
                         decoration: InputDecoration(
                           errorStyle: TextStyle(color: Colors.black),
                           labelText: 'Phone Number',
@@ -123,6 +123,10 @@ class _SignupState extends State<Userdetailfform> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your phone number';
+                          } else if (value.length != 11) {
+                            return 'Phone number must be exactly 11 digits';
+                          } else if (!RegExp(r'^\d+$').hasMatch(value)) {
+                            return 'Phone number must contain only digits';
                           }
                           return null;
                         },
@@ -130,6 +134,7 @@ class _SignupState extends State<Userdetailfform> {
                           phoneNumber = value!;
                         },
                       ),
+
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
