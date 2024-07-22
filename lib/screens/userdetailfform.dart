@@ -28,7 +28,7 @@ class _SignupState extends State<Userdetailfform> {
     return data;
   }
 
-  Future<void> createAccount(Userdetail userdetail, email) async {
+  Future<bool> createAccount(Userdetail userdetail, email) async {
       int id = await getId(email);
       print(id);
 
@@ -50,16 +50,19 @@ class _SignupState extends State<Userdetailfform> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Registration Successful')),
         );
+        return true;
         // Replace with actual navigation logic after successful registration
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${response.reasonPhrase}')),
         );
+        return false;
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An error occurred: $e')),
       );
+      return false;
     }
   }
 
@@ -171,7 +174,22 @@ class _SignupState extends State<Userdetailfform> {
                                 phoneNumber: phoneNumber,
                                 address: address,
                               );
-                              createAccount(userdetail, email);
+                              createAccount(userdetail, email).then((result){
+                                if(result){
+                                  Navigator.pushReplacementNamed(context, '/');
+                                }else{
+                                 print(result);
+                                }
+                              }).catchError((err){
+                                print(err.toString());
+                                //snackbar the error
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Login failed. Please check your credentials.'),
+                                  ),
+                                );
+
+                              });
                             }
                           },
                           child: Text(
