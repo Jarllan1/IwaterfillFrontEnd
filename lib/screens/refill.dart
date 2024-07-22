@@ -99,7 +99,7 @@ class _RefillState extends State<Refill> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/');
           },
         ),
       ),

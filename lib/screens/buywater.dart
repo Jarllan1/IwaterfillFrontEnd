@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:iwaterfill/screens/dashboard.dart';
 
 class BuyWater extends StatefulWidget {
-  const BuyWater({super.key});
+  const BuyWater({Key? key}) : super(key: key);
 
   @override
   State<BuyWater> createState() => _BuyWaterState();
@@ -13,7 +14,7 @@ class _BuyWaterState extends State<BuyWater> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-
+  DateTime _selectedDate = DateTime.now();
   List<int> _quantities = [];
 
   final List<Map<String, dynamic>> _items = [
@@ -24,7 +25,6 @@ class _BuyWaterState extends State<BuyWater> {
   @override
   void initState() {
     super.initState();
-
     _quantities = List<int>.filled(_items.length, 0);
 
     _dateController.addListener(() {
@@ -35,7 +35,6 @@ class _BuyWaterState extends State<BuyWater> {
       );
     });
   }
-
 
   String _formatDate(String text) {
     text = text.replaceAll(RegExp(r'[^0-9]'), '');
@@ -65,26 +64,35 @@ class _BuyWaterState extends State<BuyWater> {
         backgroundColor: Colors.grey[200],
         centerTitle: true,
         title: Text('Make purchase'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.popAndPushNamed(context, '/');
-          },
-        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: _dateController,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              decoration: InputDecoration(
-                labelText: 'DATE',
-                hintText: 'MM/DD/YYYY',
+            GestureDetector(
+              onTap: () {
+                _selectDate(context);
+              },
+              child: AbsorbPointer(
+                child: TextFormField(
+                  controller: _dateController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  decoration: InputDecoration(
+                    labelText: 'DATE',
+                    hintText: 'MM/DD/YYYY',
+                  ),
+                ),
               ),
+            ),
+            SizedBox(height: 16.0),
+
+            // Display Selected Date
+            Text(
+              'Selected Date: ${_dateController.text}',
+              style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 16.0),
 
@@ -194,6 +202,32 @@ class _BuyWaterState extends State<BuyWater> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: Colors.blue,
+            // accentColor: Colors.blue,
+            colorScheme: ColorScheme.light(primary: Colors.blue),
+            buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _selectedDate = pickedDate;
+        _dateController.text = DateFormat('MM/dd/yyyy').format(_selectedDate);
+      });
+    }
   }
 }
 

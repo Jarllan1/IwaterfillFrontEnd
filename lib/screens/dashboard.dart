@@ -78,28 +78,21 @@ class _DashboardState extends State<Dashboard> {
                     icon: Icons.history,
                     label: 'TRANSACTION HISTORY',
                     onPressed: () {
-                      Navigator.popAndPushNamed(context, '/transactionhistory');
+                      Navigator.pushNamed(context, '/transactionhistory');
                     },
                   ),
                   buildDashboardButton(
                     icon: Icons.shopping_cart,
                     label: 'BUY WATER',
                     onPressed: () {
-                      Navigator.popAndPushNamed(context, '/buywater');
+                      Navigator.pushNamed(context, '/buywater');
                     },
                   ),
                   buildDashboardButton(
                     icon: Icons.water,
                     label: 'REFILL',
                     onPressed: () {
-                      Navigator.popAndPushNamed(context, '/refill');
-                    },
-                  ),
-                  buildDashboardButton(
-                    icon: Icons.logout,
-                    label: 'LOG OUT',
-                    onPressed: () {
-                      Navigator.popAndPushNamed(context, '/login');
+                      Navigator.pushNamed(context, '/refill');
                     },
                   ),
                 ],
