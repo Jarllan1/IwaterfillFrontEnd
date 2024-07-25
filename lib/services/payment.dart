@@ -1,4 +1,4 @@
-class Product {
+class Payment {
   int id;
   String paymentId;
   String productName;
@@ -7,7 +7,7 @@ class Product {
   String location;
   double price;
 
-  Product({
+  Payment({
     required this.id,
     required this.paymentId,
     required this.productName,
@@ -17,19 +17,31 @@ class Product {
     required this.price,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
+  factory Payment.fromJson(Map<String, dynamic> json) {
     try {
-      return Product(
+      return Payment(
         id: json['id'],
         paymentId: json['paymentId'],
         productName: json['productName'],
         quantity: json['quantity'],
         paymentDate: DateTime.parse(json['paymentDate']),
         location: json['location'],
-        price: json['price'],
+        price: (json['price'] as num).toDouble(),
       );
     } catch (e) {
       throw FormatException('Unable to load payment: ${e.toString()}');
     }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'paymentId': paymentId,
+      'productName': productName,
+      'quantity': quantity,
+      'paymentDate': paymentDate.toIso8601String(),
+      'location': location,
+      'price': price,
+    };
   }
 }
