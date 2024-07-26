@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:iwaterfill/screens/dashboard.dart';
 import 'package:iwaterfill/services/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -186,7 +187,12 @@ class _LoginState extends State<Login> {
                               if (success) {
                                 _saveCredentials(email, password).then((result){
                                   if(result == ''){
-                                    Navigator.pushReplacementNamed(context, '/');
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Dashboard()
+                                        )
+                                    );
                                   }else{
                                     print(result);
                                   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:iwaterfill/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 
@@ -191,7 +192,12 @@ Future<bool> _logout() async{
                               buildShowDialog(context);
                               _logout().then((result) {
                               if (result) {
-                                Navigator.pushReplacementNamed(context, '/login');
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Login()
+                                    )
+                                );
                               } else {
                               Navigator.of(context).pop();
                               }

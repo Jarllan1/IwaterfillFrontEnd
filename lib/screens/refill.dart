@@ -96,12 +96,7 @@ class _RefillState extends State<Refill> {
         backgroundColor: Colors.grey[200],
         centerTitle: true,
         title: Text('Make Refill'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
-          },
-        ),
+
       ),
       body: SingleChildScrollView(
         child: Padding(

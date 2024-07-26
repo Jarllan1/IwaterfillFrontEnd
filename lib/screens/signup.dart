@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iwaterfill/screens/userdetailfform.dart';
 import 'package:iwaterfill/services/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -23,6 +24,17 @@ class _SignupState extends State<Signup> {
   IconData _obscurePasswordIcon = Icons.visibility_off;
   IconData _obscureConfirmPasswordIcon = Icons.visibility_off;
 
+  Future<String> _saveCredentials(String _email, String _password) async {
+    try {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', _email);
+      await prefs.setString('password', _password);
+      return '';
+    } catch (err) {
+      return err.toString();
+    }
+  }
 
   Future<void> createAccount(User user) async {
     try {
@@ -54,7 +66,6 @@ class _SignupState extends State<Signup> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +163,6 @@ class _SignupState extends State<Signup> {
                           email = value!;
                         },
                       ),
-
                       SizedBox(height: 10.0),
                       TextFormField(
                         style: TextStyle(color: Colors.black),
@@ -242,14 +252,23 @@ class _SignupState extends State<Signup> {
                             if (formKey.currentState!.validate()) {
                               formKey.currentState!.save();
                               if (password == confirmPassword) {
-                                User user = User(username: name, email: email, password: password,);
-                                createAccount(user);
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Userdetailfform(email: user.email)
-                                    )
-                                );
+                                User user = User(username: name, email: email, password: password);
+                                createAccount(user).then((_) {
+                                  _saveCredentials(email, password).then((result) {
+                                    if (result == '') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Userdetailfform(email: email),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('An error occurred: $result')),
+                                      );
+                                    }
+                                  });
+                                });
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Passwords do not match')),
@@ -269,7 +288,6 @@ class _SignupState extends State<Signup> {
                           ),
                         ),
                       ),
-
                       Row(
                         children: <Widget>[
                           Expanded(
