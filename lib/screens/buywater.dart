@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:iwaterfill/screens/dashboard.dart';
+import 'package:iwaterfill/services/payment.dart';
+
 
 class BuyWater extends StatefulWidget {
   const BuyWater({Key? key}) : super(key: key);
@@ -18,8 +22,8 @@ class _BuyWaterState extends State<BuyWater> {
   List<int> _quantities = [];
 
   final List<Map<String, dynamic>> _items = [
-    {'label': 'Container', 'image': 'assets/CONTAINER.png', 'price': 250},
-    {'label': 'Dispenser', 'image': 'assets/ROUND CONTAINER.png', 'price': 300},
+    {'label': 'Container', 'image': 'assets/CONTAINER.png', 'price': 250.00},
+    {'label': 'Dispenser', 'image': 'assets/ROUND CONTAINER.png', 'price': 300.00},
   ];
 
   @override
@@ -53,6 +57,46 @@ class _BuyWaterState extends State<BuyWater> {
       totalAmount += _quantities[i] * _items[i]['price'];
     }
     _amountController.text = '₱' + totalAmount.toStringAsFixed(2);
+  }
+
+  Future<void> _placeOrder() async {
+    final url = Uri.parse('http://10.0.2.2:8080/api/v1/payment/new');
+    final headers = {"Content-Type": "application/json"};
+    final paymentId = DateTime.now().millisecondsSinceEpoch.toString();
+    final itemsOrdered = _items
+        .asMap()
+        .entries
+        .map((entry) => {
+      'productName': entry.value['label'],
+      'quantity': _quantities[entry.key],
+      'price': entry.value['price'] * _quantities[entry.key]
+    })
+        .where((item) => item['quantity'] > 0)
+        .toList();
+
+    for (var item in itemsOrdered) {
+      final payment = Payment(
+        id: 0,
+        paymentId: paymentId,
+        productName: item['productName'],
+        quantity: item['quantity'],
+        paymentDate: _selectedDate,
+        location: _locationController.text,
+        price: item['price'],
+      );
+
+      final body = jsonEncode(payment.toJson());
+
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode != 200) {
+        throw Exception('Failed to place order');
+      }
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Dashboard()),
+    );
   }
 
   @override
@@ -183,12 +227,7 @@ class _BuyWaterState extends State<BuyWater> {
 
             // Place Order Button
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Dashboard()),
-                );
-              },
+              onPressed: _placeOrder,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -214,7 +253,6 @@ class _BuyWaterState extends State<BuyWater> {
         return Theme(
           data: ThemeData.light().copyWith(
             primaryColor: Colors.blue,
-            // accentColor: Colors.blue,
             colorScheme: ColorScheme.light(primary: Colors.blue),
             buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
           ),
@@ -225,14 +263,9 @@ class _BuyWaterState extends State<BuyWater> {
     if (pickedDate != null) {
       setState(() {
         _selectedDate = pickedDate;
-        _dateController.text = DateFormat('MM/dd/yyyy').format(_selectedDate);
+        _dateController.text = DateFormat('MM/dd/yyyy').format(pickedDate);
       });
     }
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: BuyWater(),
-  ));
-}
