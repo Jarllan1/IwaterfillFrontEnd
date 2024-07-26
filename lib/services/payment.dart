@@ -1,5 +1,6 @@
 class Payment {
   int id;
+  int userId;
   String paymentId;
   String productName;
   int quantity;
@@ -9,6 +10,7 @@ class Payment {
 
   Payment({
     required this.id,
+    required this.userId,
     required this.paymentId,
     required this.productName,
     required this.quantity,
@@ -21,6 +23,7 @@ class Payment {
     try {
       return Payment(
         id: json['id'],
+        userId: json['userId'],
         paymentId: json['paymentId'],
         productName: json['productName'],
         quantity: json['quantity'],
@@ -36,6 +39,7 @@ class Payment {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'userId': userId,
       'paymentId': paymentId,
       'productName': productName,
       'quantity': quantity,

@@ -28,9 +28,10 @@ class _LoginState extends State<Login> {
     try{
       SharedPreferences.setMockInitialValues({});
       final prefs = await SharedPreferences.getInstance();
+      final userId = await getUserId(email, password);
       await prefs.setString('email', _email);
       await prefs.setString('password', _password);
-
+      await prefs.setInt('userId', userId);
       setState(() {
         _email = email;
         _password = password;
@@ -40,6 +41,17 @@ class _LoginState extends State<Login> {
     }catch(err){
       return err.toString();
     }
+  }
+  Future<int> getUserId(String email, String password) async{
+    final basicAuth = base64Encode(utf8.encode('$email:$password'));
+    final response = await http.get(
+        Uri.parse('http://10.0.2.2:8080/api/v1/profile/$email'),
+        headers: <String, String>{
+          'Authorization' : 'Basic $basicAuth',
+          'Content-Type' : 'application/json'
+        }
+    );
+    return int.parse(response.body);
   }
 
   Future<bool> login(User user) async {

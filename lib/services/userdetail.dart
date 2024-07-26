@@ -11,8 +11,8 @@
 
   Map<String, dynamic> toJson() =>{
 
-    'username' : phoneNumber,
-    'email' : address,
+    'phoneNumber' : phoneNumber,
+    'address' : address,
 
 
   };
