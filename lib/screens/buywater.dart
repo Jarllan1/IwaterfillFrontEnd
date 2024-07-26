@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:iwaterfill/screens/dashboard.dart';
 import 'package:iwaterfill/services/payment.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BuyWater extends StatefulWidget {
   const BuyWater({Key? key}) : super(key: key);
@@ -14,12 +14,22 @@ class BuyWater extends StatefulWidget {
   State<BuyWater> createState() => _BuyWaterState();
 }
 
+Future<Map<String, dynamic>> _loadCredential() async {
+  final prefs = await SharedPreferences.getInstance();
+  int userId = int.parse(prefs.get('userId').toString());
+
+  return <String, dynamic>{
+    'userId': userId
+  };
+}
+
 class _BuyWaterState extends State<BuyWater> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  List<int> _quantities = [];
+  int _selectedIndex = -1; // -1 means no item selected
+  int _quantity = 1;
 
   final List<Map<String, dynamic>> _items = [
     {'label': 'Container', 'image': 'assets/CONTAINER.png', 'price': 250.00},
@@ -29,7 +39,8 @@ class _BuyWaterState extends State<BuyWater> {
   @override
   void initState() {
     super.initState();
-    _quantities = List<int>.filled(_items.length, 0);
+    _selectedDate = DateTime.now();
+    _dateController.text = DateFormat('MM/dd/yyyy').format(_selectedDate);
 
     _dateController.addListener(() {
       final text = _dateController.text;
@@ -52,31 +63,47 @@ class _BuyWaterState extends State<BuyWater> {
   }
 
   void _updateAmount() {
-    double totalAmount = 0;
-    for (int i = 0; i < _items.length; i++) {
-      totalAmount += _quantities[i] * _items[i]['price'];
+    if (_selectedIndex >= 0) {
+      double totalAmount = _items[_selectedIndex]['price'] * _quantity;
+      _amountController.text = '₱' + totalAmount.toStringAsFixed(2);
+    } else {
+      _amountController.text = '₱0.00';
     }
-    _amountController.text = '₱' + totalAmount.toStringAsFixed(2);
   }
 
   Future<void> _placeOrder() async {
+    if (_selectedIndex == -1 || _quantity <= 0) {
+      // No item selected or invalid quantity
+      return;
+    }
+
+    final userCredentials = await _loadCredential();
     final url = Uri.parse('http://10.0.2.2:8080/api/v1/payment/new');
     final headers = {"Content-Type": "application/json"};
     final paymentId = DateTime.now().millisecondsSinceEpoch.toString();
-    final itemsOrdered = _items
-        .asMap()
-        .entries
-        .map((entry) => {
-      'productName': entry.value['label'],
-      'quantity': _quantities[entry.key],
-      'price': entry.value['price'] * _quantities[entry.key]
-    })
-        .where((item) => item['quantity'] > 0)
-        .toList();
+    final selectedItem = _items[_selectedIndex];
 
+    // Create a list of items with their quantities and prices
+    final itemsOrdered = [
+      {
+        'productName': selectedItem['label'],
+        'quantity': _quantity,
+        'price': selectedItem['price'] * _quantity,
+      }
+    ];
+
+    // Print the order data for debugging
+    print('Order Data:');
+    print('User ID: ${userCredentials['userId']}');
+    print('Payment ID: $paymentId');
+    print('Location: ${_locationController.text}');
+    print('Items Ordered: $itemsOrdered');
+
+    // Create Payment object for each item (even though there's only one item here)
     for (var item in itemsOrdered) {
       final payment = Payment(
         id: 0,
+        userId: userCredentials['userId'],
         paymentId: paymentId,
         productName: item['productName'],
         quantity: item['quantity'],
@@ -87,12 +114,16 @@ class _BuyWaterState extends State<BuyWater> {
 
       final body = jsonEncode(payment.toJson());
 
+      // Send the request
       final response = await http.post(url, headers: headers, body: body);
+
+      // Check response status
       if (response.statusCode != 200) {
         throw Exception('Failed to place order');
       }
     }
 
+    // Navigate to the Dashboard after successful order placement
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Dashboard()),
@@ -144,64 +175,75 @@ class _BuyWaterState extends State<BuyWater> {
               shrinkWrap: true,
               itemCount: _items.length,
               itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Row(
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = index;
+                      _quantity = 1; // Reset quantity to 1 when a new item is selected
+                      _updateAmount();
+                    });
+                  },
+                  child: Container(
+                    color: _selectedIndex == index ? Colors.blue[100] : Colors.transparent,
+                    child: Column(
                       children: [
-                        Image.asset(
-                          _items[index]['image'],
-                          height: 50.0,
-                          width: 50.0,
-                        ),
-                        SizedBox(width: 10.0),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _items[index]['label'],
-                              style: TextStyle(fontSize: 16.0),
-                            ),
-                            Text(
-                              '₱${_items[index]['price'].toString()}',
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Spacer(),
                         Row(
                           children: [
-                            IconButton(
-                              icon: Icon(Icons.remove),
-                              onPressed: () {
-                                setState(() {
-                                  if (_quantities[index] > 0) {
-                                    _quantities[index]--;
-                                    _updateAmount();
-                                  }
-                                });
-                              },
+                            Image.asset(
+                              _items[index]['image'],
+                              height: 50.0,
+                              width: 50.0,
                             ),
                             SizedBox(width: 10.0),
-                            Text(_quantities[index].toString()),
-                            SizedBox(width: 10.0),
-                            IconButton(
-                              icon: Icon(Icons.add),
-                              onPressed: () {
-                                setState(() {
-                                  _quantities[index]++;
-                                  _updateAmount();
-                                });
-                              },
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _items[index]['label'],
+                                  style: TextStyle(fontSize: 16.0),
+                                ),
+                                Text(
+                                  '₱${_items[index]['price'].toString()}',
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
+                            Spacer(),
+                            if (_selectedIndex == index)
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.remove),
+                                    onPressed: () {
+                                      setState(() {
+                                        if (_quantity > 1) {
+                                          _quantity--;
+                                          _updateAmount();
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  Text(_quantity.toString()),
+                                  IconButton(
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {
+                                      setState(() {
+                                        _quantity++;
+                                        _updateAmount();
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
+                        SizedBox(height: 16.0),
                       ],
                     ),
-                    SizedBox(height: 16.0),
-                  ],
+                  ),
                 );
               },
             ),
@@ -264,8 +306,8 @@ class _BuyWaterState extends State<BuyWater> {
       setState(() {
         _selectedDate = pickedDate;
         _dateController.text = DateFormat('MM/dd/yyyy').format(pickedDate);
+        _updateAmount(); // Update the amount if the date changes
       });
     }
   }
 }
-
