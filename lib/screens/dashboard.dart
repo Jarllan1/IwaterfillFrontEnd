@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(MaterialApp(
     home: Dashboard(),
+
   ));
 }
 
@@ -15,28 +16,27 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Future<Map<String,String>> _loadCredentials() async {
-    try{
+  Future<Map<String, String>> _loadCredentials() async {
+    try {
       final prefs = await SharedPreferences.getInstance();
-      String _email = await prefs.get('email').toString();
-      String _password = await prefs.get('password').toString();
+      String _email = prefs.getString('email') ?? '';
+      String _password = prefs.getString('password') ?? '';
 
       return <String, String>{
-        'email' : _email,
-        'password' : _password
+        'email': _email,
+        'password': _password,
       };
-    }catch (err){
+    } catch (err) {
       return <String, String>{
-        'error': err.toString()
+        'error': err.toString(),
       };
     }
   }
 
-    @override
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _loadCredentials().then((result){
+    _loadCredentials().then((result) {
       print(result['email']);
     });
   }
@@ -50,8 +50,8 @@ class _DashboardState extends State<Dashboard> {
         centerTitle: true,
         title: Image.asset(
           'assets/wafill.png',
-          width: 300, // Adjust width as needed
-          height: 60, // Adjust height as needed
+          width: 300,
+          height: 60,
           fit: BoxFit.contain, // Adjust the fit as needed
         ),
         automaticallyImplyLeading: false,
@@ -68,28 +68,28 @@ class _DashboardState extends State<Dashboard> {
                 padding: EdgeInsets.all(20),
                 children: <Widget>[
                   buildDashboardButton(
-                    icon: Icons.person,
+                    imagePath: 'assets/profile.png',
                     label: 'PROFILE',
                     onPressed: () {
                       Navigator.pushNamed(context, '/profile');
                     },
                   ),
                   buildDashboardButton(
-                    icon: Icons.history,
+                    imagePath: 'assets/transaction_history.png',
                     label: 'TRANSACTION HISTORY',
                     onPressed: () {
                       Navigator.pushNamed(context, '/transactionhistory');
                     },
                   ),
                   buildDashboardButton(
-                    icon: Icons.shopping_cart,
+                    imagePath: 'assets/buy_water.png',
                     label: 'BUY WATER',
                     onPressed: () {
                       Navigator.pushNamed(context, '/buywater');
                     },
                   ),
                   buildDashboardButton(
-                    icon: Icons.water,
+                    imagePath: 'assets/refillwater.png',
                     label: 'REFILL',
                     onPressed: () {
                       Navigator.pushNamed(context, '/refill');
@@ -104,7 +104,11 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget buildDashboardButton({required IconData icon, required String label, required VoidCallback onPressed}) {
+  Widget buildDashboardButton({
+    required String imagePath,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -124,10 +128,10 @@ class _DashboardState extends State<Dashboard> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 50,
-              color: Colors.blue[800],
+            Image.asset(
+              imagePath,
+              width: 50, // Adjust width as needed
+              height: 50, // Adjust height as needed
             ),
             SizedBox(height: 10),
             Text(
