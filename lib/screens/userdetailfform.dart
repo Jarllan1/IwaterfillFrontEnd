@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:iwaterfill/services/userdetail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Userdetailfform extends StatefulWidget {
   final String email;
@@ -11,6 +12,8 @@ class Userdetailfform extends StatefulWidget {
   @override
   State<Userdetailfform> createState() => _SignupState(email: email);
 }
+
+
 
 class _SignupState extends State<Userdetailfform> {
   final formKey = GlobalKey<FormState>();
@@ -176,7 +179,7 @@ class _SignupState extends State<Userdetailfform> {
                               );
                               createAccount(userdetail, email).then((result){
                                 if(result){
-                                  Navigator.pushReplacementNamed(context, '/');
+                                  Navigator.pushReplacementNamed(context, '/dashboard');
                                 }else{
                                  print(result);
                                 }

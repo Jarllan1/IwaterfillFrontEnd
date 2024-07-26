@@ -54,12 +54,6 @@ class _TransactionhistoryState extends State<Transactionhistory> {
         backgroundColor: Colors.grey[200],
         centerTitle: true,
         title: Text('Transaction History'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
-          },
-        ),
       ),
 
       body: Column(
